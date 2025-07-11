@@ -230,7 +230,8 @@
             mitigationResultText.innerHTML = "<em>Generating strategy, please wait...</em>";
             mitigationButton.disabled = true;
 
-            const cloudFunctionUrl = 'YOUR_CLOUD_FUNCTION_URL_HERE'; 
+            // --- THIS IS THE URL FOR YOUR PIPEDREAM WORKFLOW ---
+            const cloudFunctionUrl = 'https://eoawd55h10dybp4.m.pipedream.net'; 
 
             try {
                 const response = await fetch(cloudFunctionUrl, {
@@ -256,3 +257,4 @@
 
 </body>
 </html>
+
