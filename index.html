@@ -61,3 +61,198 @@
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
             background-repeat: no-repeat;
             background-position: right .7em top 50%;
+            background-size: .65em auto;
+        }
+        .hra-tool-button {
+            font-weight: bold;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .hra-tool-button:hover {
+            background-color: #0056b3;
+        }
+        #hra-result {
+            margin-top: 2em;
+            padding: 1.5em;
+            border-left: 4px solid #007bff;
+            background-color: #ffffff;
+            display: none;
+            border-radius: 0 4px 4px 0;
+        }
+        #mitigation-result {
+            margin-top: 1.5em;
+            padding: 1.5em;
+            background-color: #e6f7ff;
+            border-left: 4px solid #0056b3;
+            border-radius: 0 4px 4px 0;
+            display: none;
+        }
+        #hra-result h3, #mitigation-result h3 {
+            margin-top: 0;
+        }
+        #hra-result p, #mitigation-result p {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hra-tool-container">
+    <div class="hra-tool-header">
+        <h2>Systemic Heat Risk Audit</h2>
+        <p>Discover how your primary focus connects to the wider heat crisis, based on the analysis from the Heat Resilience Lab.</p>
+    </div>
+
+    <div class="hra-question-group">
+        <label for="hra-domain-select">1. Which domain is your primary focus?</label>
+        <select id="hra-domain-select" class="hra-tool-select">
+            <option value="">-- Please Select a Domain --</option>
+            <option value="Public Health">Public Health & Emergency Response</option>
+            <option value="Urban Planning">Urban Planning & Infrastructure</option>
+            <option value="Corporate Operations">Corporate Operations & Finance</option>
+            <option value="Community Development">Community & Social Development</option>
+        </select>
+    </div>
+
+    <div class="hra-question-group" id="hra-risk-group" style="display: none;">
+        <label for="hra-risk-select">2. Within this domain, which challenge is your top priority?</label>
+        <select id="hra-risk-select" class="hra-tool-select"></select>
+    </div>
+    
+    <button id="hra-submit-button" class="hra-tool-button" style="display: none;">Get Your Systemic Audit</button>
+
+    <div id="hra-result">
+        <h3>Your Systemic Connection Analysis</h3>
+        <p id="hra-result-text"></p>
+    </div>
+
+    <div id="mitigation-section" style="display: none; margin-top: 2em;">
+        <button id="mitigation-button" class="hra-tool-button">Generate Mitigation Strategy</button>
+        <div id="mitigation-result">
+            <h3>AI-Generated Mitigation Strategy</h3>
+            <p id="mitigation-result-text">Generating strategy...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DATA OBJECT ---
+        const auditData = {
+            "Public Health": {
+                risks: ["A surge in heatstroke and dehydration cases", "The spread of heat-related infectious diseases", "Worsening mental health outcomes and stress"],
+                responses: {
+                    "A surge in heatstroke and dehydration cases": "Your focus on <strong>heatstroke and dehydration</strong> is at the sharp end of the heat crisis. This acute health emergency is systemically linked to: <br><br><strong>Urban Planning:</strong> A lack of accessible public cooling centers and insufficient green cover in low-income neighborhoods directly contributes to higher rates of heatstroke. <br><br><strong>Community Development:</strong> Socially isolated individuals, particularly the elderly, are less likely to receive help during heatwaves, turning a medical condition into a fatal social failure.",
+                    "The spread of heat-related infectious diseases": "Your focus on <strong>infectious diseases</strong> reveals a hidden amplifier of the heat crisis. The expansion of zones for vectors like mosquitoes is systemically linked to: <br><br><strong>Urban Planning:</strong> Poor management of urban water bodies and drainage systems creates new breeding grounds for disease vectors. <br><br><strong>Corporate Operations:</strong> Increased global shipping can transport vectors to new, now-suitable climates, impacting trade and public health.",
+                    "Worsening mental health outcomes and stress": "Your focus on <strong>mental health</strong> highlights a deeply personal impact of heat. This 'eco-anxiety' is systemically linked to: <br><br><strong>Corporate Operations:</strong> Financial instability caused by heat-related job losses (e.g., in construction) is a primary driver of community-wide stress. <br><br><strong>Community Development:</strong> The loss of communal public spaces to extreme heat leads to social isolation, further exacerbating mental health challenges."
+                }
+            },
+            "Urban Planning": {
+                risks: ["Critical failure of the power grid during peak demand", "Severe water scarcity and rationing", "Degradation and underutilization of public spaces"],
+                responses: {
+                    "Critical failure of the power grid during peak demand": "Your focus on <strong>power grid failure</strong> highlights a critical infrastructure vulnerability. This is not just a technical issue; it's systemically linked to: <br><br><strong>Corporate Operations:</strong> Grid failure leads to immediate and costly business interruptions, halting production and services. <br><br><strong>Public Health:</strong> A power outage during a heatwave is a life-threatening emergency, disabling essential cooling for vulnerable populations and compromising the functioning of hospitals.",
+                    "Severe water scarcity and rationing": "Your focus on <strong>water scarcity</strong> exposes the deep connection between heat and resource security. This critical shortage is systemically linked to: <br><br><strong>Public Health:</strong> Lack of clean water for hygiene and hydration during heatwaves leads to a surge in public health crises. <br><br><strong>Corporate Operations:</strong> Water-intensive industries, from manufacturing to agriculture, face operational shutdowns and financial losses, threatening economic stability.",
+                    "Degradation and underutilization of public spaces": "Your focus on the <strong>degradation of public spaces</strong> uncovers a key threat to urban quality of life. The loss of these areas is systemically linked to: <br><br><strong>Community Development:</strong> When parks become unusable due to heat, it erodes social cohesion and disproportionately affects those without private gardens. <br><br><strong>Public Health:</strong> The decline of walkable, green public spaces contributes to more sedentary lifestyles and worsens mental health outcomes for urban populations."
+                }
+            },
+            "Corporate Operations": {
+                risks: ["Reduced labor productivity due to heat stress", "Major supply chain and logistics disruptions", "Damage to physical assets and infrastructure"],
+                responses: {
+                    "Reduced labor productivity due to heat stress": "Your focus on <strong>labor productivity</strong> is a critical economic entry point to the heat crisis. This is systemically linked to: <br><br><strong>Public Health:</strong> The same heat stress that reduces productivity also leads to higher rates of chronic illness and emergency room visits, increasing public health costs. <br><br><strong>Urban Planning:</strong> The 'Urban Heat Island' effect, caused by a lack of green cover in industrial and residential areas, can raise local temperatures by 5-10°C, directly impacting your workforce.",
+                    "Major supply chain and logistics disruptions": "Your focus on <strong>supply chain disruptions</strong> reveals how heat can cripple the flow of commerce. This logistical challenge is systemically linked to: <br><br><strong>Urban Planning:</strong> Extreme heat damages critical transport infrastructure like roads and railways, while low water levels can halt shipping, causing delays. <br><br><strong>Public Health:</strong> A health crisis among transport workers or in key port cities can bring logistics to a standstill, with cascading economic effects.",
+                    "Damage to physical assets and infrastructure": "Your focus on <strong>damage to physical assets</strong> highlights the direct financial costs of heat. This is systemically linked to: <br><br><strong>Urban Planning:</strong> Inadequate building codes and poor zoning fail to protect infrastructure from heat-related material stress, from melting asphalt to warping railway lines. <br><br><strong>Community Development:</strong> Siting critical assets without community consultation can lead to opposition, delaying vital infrastructure upgrades needed for resilience."
+                }
+            },
+            "Community Development": {
+                risks: ["Increased inequality and impacts on vulnerable groups", "Disruption of informal livelihoods and economies", "Erosion of social cohesion and community trust"],
+                responses: {
+                    "Increased inequality and impacts on vulnerable groups": "Your focus on <strong>inequality</strong> is at the moral center of the heat crisis. The disproportionate impact on vulnerable groups is systemically linked to: <br><br><strong>Public Health:</strong> Unequal access to healthcare and affordable cooling means that low-income households suffer far greater health consequences from extreme heat. <br><br><strong>Urban Planning:</strong> A historical lack of investment in green infrastructure in marginalized neighborhoods concentrates heat where people are least able to cope.",
+                    "Disruption of informal livelihoods and economies": "Your focus on <strong>informal livelihoods</strong> protects the backbone of many local economies. This vital sector is threatened and systemically linked to: <br><br><strong>Urban Planning:</strong> The lack of shaded, cool public markets and spaces makes it impossible for street vendors and daily wage laborers to work safely during extreme heat. <br><br><strong>Corporate Operations:</strong> As formal sector supply chains are disrupted, it can create supply-and-demand shocks that destabilize the informal economies that rely on them.",
+                    "Erosion of social cohesion and community trust": "Your focus on <strong>social cohesion</strong> addresses the fraying of the social fabric due to heat. This erosion of trust is systemically linked to: <br><br><strong>Public Health:</strong> Perceived inequality in emergency response and access to cooling resources can breed resentment and undermine public trust in institutions. <br><br><strong>Urban Planning:</strong> Top-down planning of 'resilience' projects that lead to green gentrification can displace long-term residents, destroying community bonds and trust."
+                }
+            }
+        };
+
+        // --- ELEMENT SELECTORS ---
+        const domainSelect = document.getElementById('hra-domain-select');
+        const riskGroup = document.getElementById('hra-risk-group');
+        const riskSelect = document.getElementById('hra-risk-select');
+        const submitButton = document.getElementById('hra-submit-button');
+        const resultDiv = document.getElementById('hra-result');
+        const resultText = document.getElementById('hra-result-text');
+        const mitigationSection = document.getElementById('mitigation-section');
+        const mitigationButton = document.getElementById('mitigation-button');
+        const mitigationResult = document.getElementById('mitigation-result');
+        const mitigationResultText = document.getElementById('mitigation-result-text');
+
+        // --- EVENT LISTENERS ---
+        domainSelect.addEventListener('change', function() {
+            const selectedDomain = this.value;
+            riskSelect.innerHTML = '<option value="">-- Please Select a Risk --</option>';
+            resultDiv.style.display = 'none';
+            mitigationSection.style.display = 'none';
+            mitigationResult.style.display = 'none';
+
+            if (selectedDomain && auditData[selectedDomain]) {
+                auditData[selectedDomain].risks.forEach(function(risk) {
+                    const option = document.createElement('option');
+                    option.value = risk;
+                    option.textContent = risk;
+                    riskSelect.appendChild(option);
+                });
+                riskGroup.style.display = 'block';
+                submitButton.style.display = 'block';
+            } else {
+                riskGroup.style.display = 'none';
+                submitButton.style.display = 'none';
+            }
+        });
+
+        submitButton.addEventListener('click', function() {
+            const selectedDomain = domainSelect.value;
+            const selectedRisk = riskSelect.value;
+            if (selectedDomain && selectedRisk && auditData[selectedDomain].responses[selectedRisk]) {
+                resultText.innerHTML = auditData[selectedDomain].responses[selectedRisk];
+                resultDiv.style.display = 'block';
+                mitigationSection.style.display = 'block'; // Show the mitigation button
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            } else {
+                alert('Please select both a domain and a specific risk.');
+            }
+        });
+
+        mitigationButton.addEventListener('click', async function() {
+            const selectedRisk = riskSelect.value;
+            
+            mitigationResult.style.display = 'block';
+            mitigationResultText.innerHTML = "<em>Generating strategy, please wait...</em>";
+            mitigationButton.disabled = true;
+
+            const cloudFunctionUrl = 'YOUR_CLOUD_FUNCTION_URL_HERE'; 
+
+            try {
+                const response = await fetch(cloudFunctionUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ risk: selectedRisk })
+                });
+
+                if (!response.ok) { throw new Error('Network response was not ok'); }
+
+                const data = await response.json();
+                mitigationResultText.innerHTML = data.plan;
+
+            } catch (error) {
+                mitigationResultText.innerHTML = "Sorry, an error occurred while generating the strategy. Please try again later.";
+                console.error('Error:', error);
+            } finally {
+                mitigationButton.disabled = false;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
